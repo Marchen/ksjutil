@@ -28,6 +28,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="_data\column_names.txt" />
+    <Content Include="_data\P27_002.txt" />
+    <Content Include="_data\P27_003.txt" />
+    <Content Include="_data\P27_004.txt" />
+    <Content Include="_data\P27_007.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
