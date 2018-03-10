@@ -26,6 +26,17 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="_data\" />
+    <Folder Include="_data\P13\" />
+    <Folder Include="_data\P13\001\" />
+    <Folder Include="_data\P13\002\" />
+    <Folder Include="_data\P13\003\" />
+    <Folder Include="_data\P13\004\" />
+    <Folder Include="_data\P13\005\" />
+    <Folder Include="_data\P13\006\" />
+    <Folder Include="_data\P13\007\" />
+    <Folder Include="_data\P13\008\" />
+    <Folder Include="_data\P13\009\" />
+    <Folder Include="_data\P13\010\" />
     <Folder Include="_data\P27\" />
     <Folder Include="_data\P12\001\" />
     <Folder Include="_data\P12\002\" />
@@ -79,6 +90,18 @@
     <Content Include="_data\P12\006\meta.json" />
     <Content Include="_data\P12\007\2014.txt" />
     <Content Include="_data\P12\007\meta.json" />
+    <Content Include="_data\P13\001\meta.json" />
+    <Content Include="_data\P13\002\meta.json" />
+    <Content Include="_data\P13\003\meta.json" />
+    <Content Include="_data\P13\004\2011.txt" />
+    <Content Include="_data\P13\004\meta.json" />
+    <Content Include="_data\P13\005\meta.json" />
+    <Content Include="_data\P13\006\meta.json" />
+    <Content Include="_data\P13\007\meta.json" />
+    <Content Include="_data\P13\008\meta.json" />
+    <Content Include="_data\P13\009\2011.txt" />
+    <Content Include="_data\P13\009\meta.json" />
+    <Content Include="_data\P13\010\meta.json" />
     <Content Include="_data\P27\001\meta.json" />
     <Content Include="_data\P27\002\2013.txt" />
     <Content Include="_data\P27\002\meta.json" />
