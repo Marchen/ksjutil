@@ -13,10 +13,10 @@ Suggests:
 例：
 
 import geopandas
-import ksj
+import ksjutil
 
 gpd = geopandas.read_file("文化施設/P27-13.shp")
-clean_gpd = ksj.cleanup(gpd)
+clean_gpd = ksjutil.cleanup(gpd)
 clean_gpd.head()
 
 
