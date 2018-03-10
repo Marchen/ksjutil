@@ -26,6 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="_data\" />
+    <Folder Include="_data\P26\" />
     <Folder Include="_data\P13\" />
     <Folder Include="_data\P13\001\" />
     <Folder Include="_data\P13\002\" />
@@ -37,6 +38,19 @@
     <Folder Include="_data\P13\008\" />
     <Folder Include="_data\P13\009\" />
     <Folder Include="_data\P13\010\" />
+    <Folder Include="_data\P26\001\" />
+    <Folder Include="_data\P26\002\" />
+    <Folder Include="_data\P26\003\" />
+    <Folder Include="_data\P26\004\" />
+    <Folder Include="_data\P26\005\" />
+    <Folder Include="_data\P26\006\" />
+    <Folder Include="_data\P26\007\" />
+    <Folder Include="_data\P26\008\" />
+    <Folder Include="_data\P26\009\" />
+    <Folder Include="_data\P26\010\" />
+    <Folder Include="_data\P26\011\" />
+    <Folder Include="_data\P26\012\" />
+    <Folder Include="_data\P26\013\" />
     <Folder Include="_data\P27\" />
     <Folder Include="_data\P12\001\" />
     <Folder Include="_data\P12\002\" />
@@ -102,6 +116,20 @@
     <Content Include="_data\P13\009\2011.txt" />
     <Content Include="_data\P13\009\meta.json" />
     <Content Include="_data\P13\010\meta.json" />
+    <Content Include="_data\P26\001\meta.json" />
+    <Content Include="_data\P26\002\meta.json" />
+    <Content Include="_data\P26\003\meta.json" />
+    <Content Include="_data\P26\004\meta.json" />
+    <Content Include="_data\P26\005\meta.json" />
+    <Content Include="_data\P26\006\meta.json" />
+    <Content Include="_data\P26\007\meta.json" />
+    <Content Include="_data\P26\008\meta.json" />
+    <Content Include="_data\P26\009\2013.txt" />
+    <Content Include="_data\P26\009\meta.json" />
+    <Content Include="_data\P26\010\meta.json" />
+    <Content Include="_data\P26\011\meta.json" />
+    <Content Include="_data\P26\012\meta.json" />
+    <Content Include="_data\P26\013\meta.json" />
     <Content Include="_data\P27\001\meta.json" />
     <Content Include="_data\P27\002\2013.txt" />
     <Content Include="_data\P27\002\meta.json" />
