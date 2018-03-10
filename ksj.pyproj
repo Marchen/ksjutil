@@ -3,14 +3,15 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>7f7ff26c-9e6c-427d-bc7d-aaeaccdb21c1</ProjectGuid>
-    <ProjectHome>.</ProjectHome>
+    <ProjectHome>
+    </ProjectHome>
     <StartupFile>__init__.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>ksj</Name>
-    <RootNamespace>ksj</RootNamespace>
+    <Name>ksjutil</Name>
+    <RootNamespace>ksjutil</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -25,13 +26,83 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="_data\" />
+    <Folder Include="_data\P27\" />
+    <Folder Include="_data\P12\001\" />
+    <Folder Include="_data\P12\002\" />
+    <Folder Include="_data\P12\003\" />
+    <Folder Include="_data\P12\004\" />
+    <Folder Include="_data\P12\005\" />
+    <Folder Include="_data\P12\006\" />
+    <Folder Include="_data\P12\007\" />
+    <Folder Include="_data\P27\" />
+    <Folder Include="_data\P27\001\" />
+    <Folder Include="_data\P27\002\" />
+    <Folder Include="_data\P27\003\" />
+    <Folder Include="_data\P27\004\" />
+    <Folder Include="_data\P27\005\" />
+    <Folder Include="_data\P27\006\" />
+    <Folder Include="_data\P27\007\" />
+    <Folder Include="_data\P27\008\" />
+    <Folder Include="_data\P27\009\" />
+    <Folder Include="_data\P29\" />
+    <Folder Include="_data\P12\" />
+    <Folder Include="_data\P27\007\" />
+    <Folder Include="_data\P27\006\" />
+    <Folder Include="_data\P27\005\" />
+    <Folder Include="_data\P27\004\" />
+    <Folder Include="_data\P27\003\" />
+    <Folder Include="_data\P27\002\" />
+    <Folder Include="_data\P27\001\" />
+    <Folder Include="_data\P12\007\" />
+    <Folder Include="_data\P12\006\" />
+    <Folder Include="_data\P12\005\" />
+    <Folder Include="_data\P12\004\" />
+    <Folder Include="_data\P12\003\" />
+    <Folder Include="_data\P12\002\" />
+    <Folder Include="_data\P12\001\" />
+    <Folder Include="_data\P29\001\" />
+    <Folder Include="_data\P29\002\" />
+    <Folder Include="_data\P29\003\" />
+    <Folder Include="_data\P29\004\" />
+    <Folder Include="_data\P29\005\" />
+    <Folder Include="_data\P29\006\" />
+    <Folder Include="_data\P29\007\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="README.md" />
     <Content Include="_data\column_names.txt" />
-    <Content Include="_data\P27_002.txt" />
-    <Content Include="_data\P27_003.txt" />
-    <Content Include="_data\P27_004.txt" />
-    <Content Include="_data\P27_007.txt" />
+    <Content Include="_data\P12\001\meta.json" />
+    <Content Include="_data\P12\002\meta.json" />
+    <Content Include="_data\P12\003\meta.json" />
+    <Content Include="_data\P12\005\meta.json" />
+    <Content Include="_data\P12\004\meta.json" />
+    <Content Include="_data\P12\006\meta.json" />
+    <Content Include="_data\P12\007\2014.txt" />
+    <Content Include="_data\P12\007\meta.json" />
+    <Content Include="_data\P27\001\meta.json" />
+    <Content Include="_data\P27\002\2013.txt" />
+    <Content Include="_data\P27\002\meta.json" />
+    <Content Include="_data\P27\003\2013.txt" />
+    <Content Include="_data\P27\003\meta.json" />
+    <Content Include="_data\P27\004\2013.txt" />
+    <Content Include="_data\P27\004\meta.json" />
+    <Content Include="_data\P27\005\meta.json" />
+    <Content Include="_data\P27\006\meta.json" />
+    <Content Include="_data\P27\007\2013.txt" />
+    <Content Include="_data\P27\007\meta.json" />
+    <Content Include="_data\P27\008\meta.json" />
+    <Content Include="_data\P27\009\meta.json" />
+    <Content Include="_data\P29\001\meta.json" />
+    <Content Include="_data\P29\002\meta.json" />
+    <Content Include="_data\P29\002\2013.txt" />
+    <Content Include="_data\P29\003\meta.json" />
+    <Content Include="_data\P29\003\2013.txt" />
+    <Content Include="_data\P29\004\meta.json" />
+    <Content Include="_data\P29\004\2013.txt" />
+    <Content Include="_data\P29\005\meta.json" />
+    <Content Include="_data\P29\006\meta.json" />
+    <Content Include="_data\P29\007\meta.json" />
+    <Content Include="_data\P29\007\2013.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
