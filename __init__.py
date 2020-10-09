@@ -210,8 +210,6 @@ def _read_codelist_file(
     Returns:
         None, dict:
             変換表が見つかった場合、{code: data}形式の辞書を返す。
-            codeは文字列ではなく整数型になるので、
-            変換前にコードのデータ型を文字列から整数に変更しておく必要がある。
             変換表が見つからない場合、Noneを返す。
 
     """
@@ -285,8 +283,8 @@ def _convert_code(
         if code_dict is None:
             continue
         df[i] = [
-            code_dict[code] if code in code_dict else numpy.NaN
-            for code in df[i].astype(int)
+            code_dict[code] if code in code_dict else numpy.NA
+            for code in df[i]
         ]
     return df
 
