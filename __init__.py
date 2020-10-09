@@ -30,8 +30,7 @@ import codecs
 import itertools
 import json
 import os
-import re
-from typing import Callable, Dict, List, Tuple
+from typing import Callable, Dict, Tuple
 import warnings
 
 import numpy
@@ -98,18 +97,15 @@ def _metadata_dir_path(column_name: str) -> str:
 
 
 #------------------------------------------------------------------------------
-def _read_column_metadata(
-    column_name: str, lang: str = "ja"
-) -> Dict[str, str]:
+def _read_column_metadata(column_name: str, language: str) -> Dict[str, str]:
     """
     列名に対応するメタデータを読み込んで整形する。
 
     Args:
         column_name (str):
             列名。
-        lang (str):
+        language (str):
             言語コード。
-            今のところデフォルトの日本語だけに対応。
 
     Returns:
         以下の形式のデータ。
@@ -124,7 +120,11 @@ def _read_column_metadata(
     root_dir = _metadata_dir_path(column_name)
     path = os.path.join(root_dir, "meta.json")
     with codecs.open(path, encoding = "utf_8") as f:
-        metadata = json.load(f)[lang]
+        metadata = json.load(f)
+        if language in metadata:
+            metadata = metadata[language]
+        else:
+            return
     # 最新のデータをデフォルトとして採用。
     latest_year = str(max([int(i) for i in metadata]))
     metadata["latest_year"] = latest_year
@@ -136,9 +136,13 @@ def _read_column_metadata(
 
 
 #------------------------------------------------------------------------------
-def _create_column_metadata_list() -> Dict[str, dict]:
+def _create_column_metadata_list(language: str) -> Dict[str, dict]:
     """
     変換情報が存在する列に対応するメタデータ一覧を作成する。
+
+    Args:
+        lang (str):
+            言語コード。
 
     Returns:
         dict:
@@ -157,13 +161,16 @@ def _create_column_metadata_list() -> Dict[str, dict]:
     column_names = list(itertools.chain.from_iterable(column_names))
     column_names = ["{0}_{1}".format(*i) for i in column_names]
     # 列のメタデータを読み込む。
-    metadata = {i: _read_column_metadata(i) for i in column_names}
+    metadata = {
+        i: _read_column_metadata(i, language) for i in column_names
+        if _read_column_metadata(i, language) is not None
+    }
     return metadata
 
 
 #------------------------------------------------------------------------------
 def _read_codelist_file(
-   column_name: str, year: (int, str, None)
+   column_name: str, year: (int, str, None), language: str
 ) -> (None, Dict[int, str]):
     """
     コードとデータの変換表を読み込む。
@@ -173,6 +180,8 @@ def _read_codelist_file(
             変換するコードの列名。
         year (int, str, None):
             データの年。
+        language (str):
+            言語コード。
 
     Returns:
         None, dict:
@@ -182,11 +191,12 @@ def _read_codelist_file(
             変換表が見つからない場合、Noneを返す。
 
     """
-    if not column_name in _COLUMN_LIST:
+    column_list = _COLUMN_LIST[language]
+    if not column_name in column_list:
         return
-    if not _COLUMN_LIST[column_name]["has_code_table"]:
+    if not column_list[column_name]["has_code_table"]:
         return
-    year = _COLUMN_LIST[column_name]["latest_year"] if year is None else year
+    year = column_list[column_name]["latest_year"] if year is None else year
     path = os.path.join(_metadata_dir_path(column_name), year + ".txt")
     codelist = pandas.read_csv(path, sep = "\t", encoding = "utf_8")
     return {code: data for code, data in zip(codelist.code, codelist.data)}
@@ -199,7 +209,9 @@ def _create_cached_code_list_fun() -> Callable:
     """
     # キャッシュを準備。
     cache = {}
-    def read_code_list(column_name: str, year: (int, str, None)) -> dict:
+    def read_code_list(
+        column_name: str, year: (int, str, None), language: str
+    ) -> dict:
         """
         国土数値情報のコード変換表を読み込む。
 
@@ -216,7 +228,7 @@ def _create_cached_code_list_fun() -> Callable:
         key = "{0}-{1}".format(column_name, str(year))
         if key in cache:
             return cache[key]
-        code_dict = _read_codelist_file(column_name, year)
+        code_dict = _read_codelist_file(column_name, year, language)
         if code_dict is not None:
             cache[key] = code_dict
         return code_dict
@@ -228,7 +240,7 @@ _read_codelist = _create_cached_code_list_fun()
 
 #-----------------------------------------------------------------------------
 def _convert_code(
-    df: pandas.DataFrame, year: (int, str, None)
+    df: pandas.DataFrame, year: (int, str, None), language: str
 ) -> pandas.DataFrame:
     """
     国土数値情報のコードを対応するデータに変換する。
@@ -245,7 +257,7 @@ def _convert_code(
             変換済みのデータ。
     """
     for i in df.columns:
-        code_dict = _read_codelist(i, year)
+        code_dict = _read_codelist(i, year, language)
         if code_dict is None:
             continue
         df[i] = [
@@ -257,7 +269,7 @@ def _convert_code(
 
 #-----------------------------------------------------------------------------
 def _find_column_name_from_data_dir(
-    column_name: str, year: (int, str, None)
+    column_name: str, year: (int, str, None), language: str
 ) -> str:
     """
     詳細データから列名データを取得する。
@@ -267,28 +279,32 @@ def _find_column_name_from_data_dir(
             国土数値情報の列名コード。
         year (int, str, None):
             データの年。Noneが指定された場合、最新の列名を返す。
+        language (str):
+            言語コード。
 
     Returns:
         str:
             変換した列名。
             変換する物が見つからない場合、元の列名（コード）を返す。
     """
-    if not column_name in _COLUMN_LIST:
+    column_list = _COLUMN_LIST[language]
+    if not column_name in column_list:
         return column_name
     if year is None:
-        return _COLUMN_LIST[column_name]["default_name"]
-    if str(year) not in _COLUMN_LIST[column_name]:
+        return column_list[column_name]["default_name"]
+    if str(year) not in column_list[column_name]:
         warnings.warn(
             "Specified year not found in the data.\n"
             "Default column name was used for '{0}'.".format(column_name)
         )
-        return _COLUMN_LIST[column_name]["default_name"]
-    return _COLUMN_LIST[column_name][str(year)]
+        return column_list[column_name]["default_name"]
+    return column_list[column_name][str(year)]
 
 
 #-----------------------------------------------------------------------------
 def _rename_columns(
-    df: pandas.DataFrame, year: (int, str, None), conv_table: dict
+    df: pandas.DataFrame, year: (int, str, None), conv_table: dict,
+    language: str
 ) -> pandas.DataFrame:
     """
     国土数値情報の列名を変更する。
@@ -296,24 +312,52 @@ def _rename_columns(
     Args:
         df (DataFrame):
             国土数値情報が含まれたテーブル。
+        year (int, str, None):
+            データの作成年度。
         conv_table (dict):
             列名変換表。
             {"国土数値情報列名コード": "列名"} 形式。
+        language (str):
+            言語コード。
 
+    Returns:
+        str:
+            変換した列名。
     """
     # まずはちゃんとしたデータがある方のデータを使い、
     # データが見つからなかったときに一覧のデータを使う。
     df.columns = [
-        _find_column_name_from_data_dir(i, year) for i in df.columns
+        _find_column_name_from_data_dir(i, year, language) for i in df.columns
     ]
     df.columns = [conv_table[i] if i in conv_table else i for i in df.columns]
     return df
 
 
+#==============================================================================
+#   データ準備
+#==============================================================================
+
+# 列名のメタデータ
+_COLUMN_LIST = {
+    "ja": _create_column_metadata_list("ja"),
+    "en": _create_column_metadata_list("en")
+}
+
+# デフォルトの列名変換テーブル
+_DEFAULT_COLUMNS = {
+    lang: data for lang, data in
+    zip(["ja", "en"], _read_default_column_name_conversion_table())
+}
+
+
+#==============================================================================
+#   メイン関数。
+#==============================================================================
+
 #-----------------------------------------------------------------------------
 def cleanup(
     df: pandas.DataFrame, year: (int, str, None) = None,
-    inplace: bool = False
+    inplace: bool = False, language: str = "ja"
 ) -> (None, pandas.DataFrame):
     """
     列名の変更とコードのデータへの変更を行い、国土数値情報の可読性を上げる。
@@ -327,23 +371,15 @@ def cleanup(
             指定しない場合、データに存在する最新の列名が使われる。
         inplace (bool):
             Trueならコピーを作成せずにデータを書き換える。
+        language (str):
+            列名の言語。
+            "ja"と"en"に対応。ただし、"en"はほとんどまだ実装していない。
 
     Value (pandas.DataFrame):
         inplaceがFalseなら整形したデータを返す。
     """
     if not inplace:
         df = df.copy()
-    df = _convert_code(df, year)
-    df = _rename_columns(df, year, _COLUMNS_JA)
+    df = _convert_code(df, year, language)
+    df = _rename_columns(df, year, _DEFAULT_COLUMNS[language], language)
     return df if not inplace else None
-
-
-#==============================================================================
-#   データ準備
-#==============================================================================
-
-# 列名のメタデータ
-_COLUMN_LIST = _create_column_metadata_list()
-
-# デフォルトの列名変換テーブル
-_COLUMNS_JA, _COLUMNS_EN = _read_default_column_name_conversion_table()
