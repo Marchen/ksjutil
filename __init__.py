@@ -280,7 +280,7 @@ def _convert_code(
         if code_dict is None:
             continue
         df[i] = [
-            code_dict[code] if code in code_dict else numpy.NA
+            code_dict[code] if code in code_dict else pandas.NA
             for code in df[i]
         ]
     return df
