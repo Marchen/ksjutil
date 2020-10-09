@@ -36,6 +36,8 @@ import warnings
 import numpy
 import pandas
 
+from ._conv import G02
+
 __all__ = ["cleanup"]
 
 
@@ -47,10 +49,32 @@ __all__ = ["cleanup"]
 # デフォルトの列名リスト。
 _DEFAULT_COLNAME_FILE = "column_names.txt"
 
+# 変換関数を読み込み。
+_CONVERT_FUNCTIONS = [
+    [2012, G02.convert]
+]
+
 
 #==============================================================================
 #   関数定義
 #==============================================================================
+
+#-----------------------------------------------------------------------------
+def _convert_values(df: pandas.DataFrame, year: int) -> pandas.DataFrame:
+    """
+    データの値を変換する。
+
+    Args:
+        df (pandas.DataFrame):
+            変換するデータ。
+        year (int):
+            変換するデータの年。
+    """
+    for y, convert in _CONVERT_FUNCTIONS:
+        if year == y:
+            df = convert(df)
+    return df
+
 
 #-----------------------------------------------------------------------------
 def _data_dir_path():
@@ -380,6 +404,7 @@ def cleanup(
     """
     if not inplace:
         df = df.copy()
+    df = _convert_values(df, year)
     df = _convert_code(df, year, language)
     df = _rename_columns(df, year, _DEFAULT_COLUMNS[language], language)
     return df if not inplace else None
