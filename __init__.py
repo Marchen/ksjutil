@@ -48,7 +48,7 @@ _DEFAULT_COLNAME_FILE = "column_names.txt"
 
 # 変換関数を読み込み。
 _CONVERT_FUNCTIONS = [
-    [2012, G02.convert]
+    [2012, G02.LATEST_YEAR, G02.convert]
 ]
 
 
@@ -67,8 +67,8 @@ def _convert_values(df: pandas.DataFrame, year: int) -> pandas.DataFrame:
         year (int):
             変換するデータの年。
     """
-    for y, convert in _CONVERT_FUNCTIONS:
-        if year == y:
+    for y, latest_year, convert in _CONVERT_FUNCTIONS:
+        if year == y or (year is None and y == latest_year):
             df = convert(df)
     return df
 
