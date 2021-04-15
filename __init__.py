@@ -27,7 +27,7 @@ import codecs
 import itertools
 import json
 import os
-from typing import Callable, Dict, Tuple
+from typing import Callable, Dict, Tuple, Union
 import warnings
 
 import numpy
@@ -191,8 +191,8 @@ def _create_column_metadata_list(language: str) -> Dict[str, dict]:
 
 #------------------------------------------------------------------------------
 def _read_codelist_file(
-   column_name: str, year: (int, str, None), language: str
-) -> (None, Dict[int, str]):
+   column_name: str, year: Union[int, str, None], language: str
+) -> Union[None, Dict[int, str]]:
     """
     コードとデータの変換表を読み込む。
 
@@ -229,7 +229,7 @@ def _create_cached_code_list_fun() -> Callable:
     # キャッシュを準備。
     cache = {}
     def read_code_list(
-        column_name: str, year: (int, str, None), language: str
+        column_name: str, year: Union[int, str, None], language: str
     ) -> dict:
         """
         国土数値情報のコード変換表を読み込む。
@@ -259,7 +259,7 @@ _read_codelist = _create_cached_code_list_fun()
 
 # -----------------------------------------------------------------------------
 def _convert_code(
-    df: pandas.DataFrame, year: (int, str, None), language: str
+    df: pandas.DataFrame, year: Union[int, str, None], language: str
 ) -> pandas.DataFrame:
     """
     国土数値情報のコードを対応するデータに変換する。
@@ -288,7 +288,7 @@ def _convert_code(
 
 # -----------------------------------------------------------------------------
 def _find_column_name_from_data_dir(
-    column_name: str, year: (int, str, None), language: str
+    column_name: str, year: Union[int, str, None], language: str
 ) -> str:
     """
     詳細データから列名データを取得する。
@@ -322,7 +322,7 @@ def _find_column_name_from_data_dir(
 
 # -----------------------------------------------------------------------------
 def _rename_columns(
-    df: pandas.DataFrame, year: (int, str, None), conv_table: dict,
+    df: pandas.DataFrame, year: Union[int, str, None], conv_table: dict,
     language: str
 ) -> pandas.DataFrame:
     """
@@ -375,9 +375,9 @@ _DEFAULT_COLUMNS = {
 
 # -----------------------------------------------------------------------------
 def cleanup(
-    df: pandas.DataFrame, year: (int, str, None) = None,
+    df: pandas.DataFrame, year: Union[int, str, None] = None,
     inplace: bool = False, language: str = "ja"
-) -> (None, pandas.DataFrame):
+) -> Union[None, pandas.DataFrame]:
     """
     列名の変更とコードのデータへの変更を行い、国土数値情報の可読性を上げる。
 
