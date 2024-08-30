@@ -27,6 +27,7 @@ import codecs
 import itertools
 import json
 import os
+from pathlib import Path
 from typing import Callable, Dict, Tuple, Union
 import warnings
 
@@ -74,11 +75,11 @@ def _convert_values(df: pandas.DataFrame, year: int) -> pandas.DataFrame:
 
 
 # -----------------------------------------------------------------------------
-def _data_dir_path():
+def _data_dir_path() -> Path:
     """
     データディレクトリのパスを返す。
     """
-    return os.path.join(os.path.dirname(__file__), "_data")
+    return Path(__file__).parent / "_data"
 
 
 #------------------------------------------------------------------------------
@@ -92,7 +93,7 @@ def _read_default_column_name_conversion_table() -> Tuple[Dict[str, str]]:
             １番目の辞書が日本語、２番目が英語。
             ただし、英語はまだほとんど実装していない。
     """
-    path = os.path.join(_data_dir_path(), _DEFAULT_COLNAME_FILE)
+    path = _data_dir_path() / _DEFAULT_COLNAME_FILE
     df = pandas.read_csv(path, encoding = "utf_8",  sep = "\t")
     conv_ja = {key: value for key, value in zip(df["対応番号"], df["属性名"])}
     conv_en = {key: value for key, value in zip(df["対応番号"], df["name"])}
@@ -100,7 +101,7 @@ def _read_default_column_name_conversion_table() -> Tuple[Dict[str, str]]:
 
 
 #------------------------------------------------------------------------------
-def _metadata_dir_path(column_name: str) -> str:
+def _metadata_dir_path(column_name: str) -> Path:
     """
     列名に対応したメタデータの存在するディレクトリのパスを返す。
 
@@ -112,9 +113,7 @@ def _metadata_dir_path(column_name: str) -> str:
         str:
             ディレクトリのパス。
     """
-    subfolders = column_name.split("_")
-    path = os.path.join(_data_dir_path(), *subfolders)
-    return path
+    return _data_dir_path().joinpath(*column_name.split("_"))
 
 
 #------------------------------------------------------------------------------
@@ -139,19 +138,17 @@ def _read_column_metadata(column_name: str, language: str) -> Dict[str, str]:
     """
     # メタデータを読み込む。
     root_dir = _metadata_dir_path(column_name)
-    path = os.path.join(root_dir, "meta.json")
-    with codecs.open(path, encoding = "utf_8") as f:
-        metadata = json.load(f)
-        if language in metadata:
-            metadata = metadata[language]
-        else:
-            return
+    metadata = json.loads((root_dir / "meta.json").read_text("utf_8"))
+    if language in metadata:
+        metadata = metadata[language]
+    else:
+        return
     # 最新のデータをデフォルトとして採用。
     latest_year = str(max([int(i) for i in metadata]))
     metadata["latest_year"] = latest_year
     metadata["default_name"] = metadata[latest_year]
     # 変換テーブルの存在を確認。
-    files = os.listdir(root_dir)
+    files = sorted(root_dir.glob("*"))
     metadata["has_code_table"] = len(files) > 1
     return metadata
 
@@ -170,12 +167,9 @@ def _create_column_metadata_list(language: str) -> Dict[str, dict]:
             {"列名": {列のメタデータ}}形式のメタデータの一覧。
     """
     # 対応している国土数値情報の識別子一覧を作成する。
-    data_names = os.listdir(_data_dir_path())
-    data_names.remove(_DEFAULT_COLNAME_FILE)
+    data_names = sorted(_data_dir_path().glob("*/"))
     # サブフォルダを取得し、対応している列名の一覧を作成する。
-    subfolders = {
-        i: os.listdir(os.path.join(_data_dir_path(), i)) for i in data_names
-    }
+    subfolders = {i.name: [j.name for j in i.glob("*/")] for i in data_names}
     column_names = [
         list(itertools.product([k], v)) for k, v in subfolders.items()
     ]
@@ -216,7 +210,7 @@ def _read_codelist_file(
     if not column_list[column_name]["has_code_table"]:
         return
     year = column_list[column_name]["latest_year"] if year is None else year
-    path = os.path.join(_metadata_dir_path(column_name), year + ".txt")
+    path = _metadata_dir_path(column_name) / f"{year}.txt"
     codelist = pandas.read_csv(path, sep = "\t", encoding = "utf_8")
     return {code: data for code, data in zip(codelist.code, codelist.data)}
 
